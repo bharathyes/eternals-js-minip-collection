@@ -1,30 +1,43 @@
-// program flow - data init ?
+// how to create an internal representation with Dominator.create 
+// that can be used by Dominator.set and Dominator.addChild to alter interal values?
+// but then calling Dominator() will create an DOM element when passed the above internal representation
 
-var Dominator = dominator.Dominator;
+// what is Dominator here ? A module / class / function ??
+// NOTE: Dominator syntax representation is similar to jQuery...
 
-// FIXME: how to call without `new` operator?
-var myElementObj = new Dominator({
-    type: "div",
-    attr: {
-        class: "app main",
-    },
-    child: null,
+(function (root, publicFns) {
+    root.maker = publicFns(root.dominator)
+})(window, function (dominator) {
+
+    var Dominator = dominator.Dominator;
+
+    var myElementObj = Dominator.create({
+        type: "div",
+        attr: [{
+            class: "app main",
+        },
+        {
+            id: "unique"
+        }],
+        child: null,
+    });
+
+    myElementObj.set('class', ['box', 'box-container']).set('id', 'my-id-1');  
+
+    var myChildElementObj = Dominator.create({
+        type: 'p',
+        attr: [{
+            class: "app main"
+        },
+        { id: "p1" }
+        ],
+        child: null,
+    });
+    myElementObj.addChild(myChildElementObj);
+
+
+    var elementsDom = Dominator(myElementObj);
+    document.body.append(elementsDom);
+
 });
-
-myElementObj.set('class', ['box', 'box-container']);
-myElementObj.set('id', 'my-id-1');
-
-var myChildElementObj = new Dominator({
-    type: 'p',
-    attr: {
-        class: "app main",
-    },
-    child: null,
-});
-
-myElementObj.addChild(myChildElementObj);
-
-
-var elementsDom = myElementObj.build();
-document.body.append(elementsDom);
 
