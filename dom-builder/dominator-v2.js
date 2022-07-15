@@ -1,10 +1,11 @@
 (function (root, publicFns) {
-    root.dominator = publicFns();
+    root.Dominator = publicFns();
 })(window, function () {
 
-    var Tag = function (type, attr, child) {
+    var Tag = function (type, attr, text, child) {
         this.type = type;
         this.attr = attr;
+        this.text = text;
         if (child instanceof Tag) {
             this.child = child;
         } else {
@@ -27,20 +28,32 @@
         return "Child of invalid type."
     };
 
+    Tag.addText = function (text) {
+        if(typeof text !== "undefined") {
+            this.text = text;
+        }
+    }
+
     var Dominator = function (obj) {
-        // perform builder operation here
-        var ele = document.createElement(obj.type);
+        
+        var type = obj.type;
+        if (typeof type === "undefined") {
+            return "empty tag name."
+        }
+        var ele = document.createElement(type);
 
         // attributes array of objects
-        obj.attr.forEach(function (attrObj) {
-            Object.keys(attrObj).forEach(function (key) {
-                var valueStr = attrObj[key];
-                if (Array.isArray(valueStr)) {
-                    valueStr = valueStr.join(' ');
-                }
-                ele.setAttribute(key, valueStr);
-            });
-        })
+
+        var attrObj = obj.attr;
+        Object.keys(attrObj).forEach(function (key) {
+            var valueStr = attrObj[key];
+            if (Array.isArray(valueStr)) {
+                valueStr = valueStr.join(' ');
+            }
+            ele.setAttribute(key, valueStr);
+        });
+
+        ele.innerText = obj.text;
 
         // recurse on (nested) array of child nodes
         var childs = obj.child;
@@ -66,14 +79,14 @@
     }
 
 
-    create = function (ipData) {
+    Dominator.create = function (ipData) {
         var attrs = ipData.attr;
         if (!Array.isArray(attrs)) {
             return "invalid attributes.";
         }
 
         var flatAttr = flattenAttr(attrs);
-        var tagObj = new Tag(ipData.type, flatAttr, ipData.child);
+        var tagObj = new Tag(ipData.type, flatAttr, ipData.text, ipData.child);
 
         if (tagObj instanceof Tag) {
             return tagObj;
@@ -81,8 +94,6 @@
         return "Object creation failed."
     };
 
-    return {
-        Dominator: Dominator,
-    }
+    return Dominator;
 
 });
