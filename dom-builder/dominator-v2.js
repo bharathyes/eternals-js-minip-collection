@@ -6,11 +6,7 @@
         this.type = type;
         this.attr = attr;
         this.text = text;
-        if (child instanceof Tag) {
-            this.child = child;
-        } else {
-            return "Child of invalid type."
-        }
+        this.child = child;
     }
 
     Tag.prototype.set = function (key, value) {
@@ -29,13 +25,13 @@
     };
 
     Tag.addText = function (text) {
-        if(typeof text !== "undefined") {
+        if (typeof text !== "undefined") {
             this.text = text;
         }
     }
 
     var Dominator = function (obj) {
-        
+
         var type = obj.type;
         if (typeof type === "undefined") {
             return "empty tag name."
@@ -53,7 +49,9 @@
             ele.setAttribute(key, valueStr);
         });
 
-        ele.innerText = obj.text;
+        if (typeof obj.text !== "undefined") {
+            ele.innerText = obj.text;
+        }
 
         // recurse on (nested) array of child nodes
         var childs = obj.child;
@@ -86,6 +84,16 @@
         }
 
         var flatAttr = flattenAttr(attrs);
+
+        var childs = ipData.child;
+        var newChildObjs = [];
+        if (Array.isArray(childs)) {
+            childs.forEach(function (child) {
+                newChildObjs.push(Dominator.create(child));
+            })
+            ipData.child = newChildObjs;
+        }
+
         var tagObj = new Tag(ipData.type, flatAttr, ipData.text, ipData.child);
 
         if (tagObj instanceof Tag) {
