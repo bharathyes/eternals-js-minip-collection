@@ -49,7 +49,7 @@ var main = Dominator.create({
 
 var main2 = Dominator.create(
     {
-        type: "div",
+        type: "h2",
         attr: [
             { class: "collapse navbar-collapse" },
             { id: "navbarSupportedContent" },
@@ -129,7 +129,16 @@ var main2 = Dominator.create(
     }
 );
 
+var main3 = Dominator.create({
+    type: "main",
+    attr: [
+        { class: "main" }
+    ],
+    child: [main2]
+});
+
+// main3.addChild(main2);
 
 
-var elementsDom = Dominator(main2);
+var elementsDom = Dominator(main3);
 document.body.append(elementsDom);

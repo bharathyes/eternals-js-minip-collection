@@ -87,9 +87,12 @@
 
         var childs = ipData.child;
         var newChildObjs = [];
-        if (Array.isArray(childs)) {
+        if (Array.isArray(childs) && (!(childs[0] instanceof Tag))) {
             childs.forEach(function (child) {
-                newChildObjs.push(Dominator.create(child));
+                newTag = Dominator.create(child);
+                if (newTag instanceof Tag) {
+                    newChildObjs.push(newTag);
+                }
             })
             ipData.child = newChildObjs;
         }
